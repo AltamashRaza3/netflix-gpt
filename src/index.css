@@ -1,11 +1,14 @@
 @import "tailwindcss";
 @layer base {
   html, body {
-     margin: 0;
-     padding: 0;
-     background-color: black;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: white;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   }
 }
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
