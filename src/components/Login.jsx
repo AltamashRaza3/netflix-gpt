@@ -1,8 +1,18 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header";
+import { checkValidate } from "../utils/validate";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
+
+const email = useRef(null);
+const password = useRef(null);
+  
+
+  const handleButtonClick = () =>{
+    // Validate the form data
+    checkValidate(email.current.value,password.current.value);
+  }
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
@@ -25,7 +35,9 @@ const Login = () => {
       <Header />
 
       {/* Auth Form */}
-      <form className="absolute top-1/2 left-1/2 w-11/12 sm:w-8/12 md:w-5/12 lg:w-3/12 -translate-x-1/2 -translate-y-1/2 bg-black/80 p-10 rounded-lg text-white shadow-lg">
+      <form
+        onSubmit={(e)=>e.preventDefault}
+        className="absolute top-1/2 left-1/2 w-11/12 sm:w-8/12 md:w-5/12 lg:w-3/12 -translate-x-1/2 -translate-y-1/2 bg-black/80 p-10 rounded-lg text-white shadow-lg">
         <h1 className="font-bold text-3xl mb-6">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
@@ -41,6 +53,7 @@ const Login = () => {
 
         {/* Email */}
         <input
+          ref={email}
           type="email"
           placeholder="Email Address"
           className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -48,13 +61,15 @@ const Login = () => {
 
         {/* Password */}
         <input
+          ref={password}
           type="password"
           placeholder="Password"
           className="p-3 mb-6 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
         />
 
         {/* Button */}
-        <button className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold">
+        <button className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold"
+        onClick={handleButtonClick}>
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
 
