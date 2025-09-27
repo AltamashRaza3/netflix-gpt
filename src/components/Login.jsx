@@ -4,18 +4,19 @@ import { checkValidate } from "../utils/validate";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-const email = useRef(null);
-const password = useRef(null);
-  
+  const email = useRef(null);
+  const password = useRef(null);
 
-  const handleButtonClick = () =>{
-    // Validate the form data
-    checkValidate(email.current.value,password.current.value);
-  }
+  const handleButtonClick = () => {
+    const message = checkValidate(email.current.value, password.current.value);
+    setErrorMessage(message);
+  };
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
+    setErrorMessage(null); // clear errors when switching forms
   };
 
   return (
@@ -27,7 +28,6 @@ const password = useRef(null);
           alt="bg-image"
           className="w-full h-full object-cover"
         />
-        {/* Overlay */}
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
 
@@ -36,13 +36,13 @@ const password = useRef(null);
 
       {/* Auth Form */}
       <form
-        onSubmit={(e)=>e.preventDefault}
-        className="absolute top-1/2 left-1/2 w-11/12 sm:w-8/12 md:w-5/12 lg:w-3/12 -translate-x-1/2 -translate-y-1/2 bg-black/80 p-10 rounded-lg text-white shadow-lg">
+        onSubmit={(e) => e.preventDefault()}
+        className="absolute top-1/2 left-1/2 w-11/12 sm:w-8/12 md:w-5/12 lg:w-3/12 -translate-x-1/2 -translate-y-1/2 bg-black/80 p-10 rounded-lg text-white shadow-lg"
+      >
         <h1 className="font-bold text-3xl mb-6">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
 
-        {/* Show Name field only in Sign Up */}
         {!isSignInForm && (
           <input
             type="text"
@@ -51,7 +51,6 @@ const password = useRef(null);
           />
         )}
 
-        {/* Email */}
         <input
           ref={email}
           type="email"
@@ -59,7 +58,6 @@ const password = useRef(null);
           className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
         />
 
-        {/* Password */}
         <input
           ref={password}
           type="password"
@@ -67,13 +65,19 @@ const password = useRef(null);
           className="p-3 mb-6 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
         />
 
-        {/* Button */}
-        <button className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold"
-        onClick={handleButtonClick}>
+        <button
+          type="button"
+          className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold cursor-pointer"
+          onClick={handleButtonClick}
+        >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
 
-        {/* Extra Options (only show on Sign In) */}
+        {/* Error Message */}
+        {errorMessage && (
+          <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+        )}
+
         {isSignInForm && (
           <div className="flex justify-between items-center text-sm text-gray-400 mt-4">
             <label className="flex items-center space-x-2">
@@ -86,18 +90,17 @@ const password = useRef(null);
           </div>
         )}
 
-        {/* Toggle between Sign In / Sign Up */}
         <p className="mt-8 text-gray-400 text-sm">
           {isSignInForm ? "New to Netflix?" : "Already have an account?"}{" "}
-          <span
+          <button
+            type="button"
             className="text-white hover:underline cursor-pointer"
             onClick={toggleSignInForm}
           >
             {isSignInForm ? "Sign up now" : "Sign in"}
-          </span>
+          </button>
         </p>
 
-        {/* Disclaimer */}
         <p className="mt-4 text-xs text-gray-500 leading-relaxed">
           This page is protected by Google reCAPTCHA to ensure you’re not a bot.
         </p>
