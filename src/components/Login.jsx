@@ -1,19 +1,75 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidate } from "../utils/validate";
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
+import {auth} from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const fullName = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
   const handleButtonClick = () => {
-    const message = checkValidate(email.current.value, password.current.value,fullName.current.value);
+    const emailValue = email.current?.value || "";
+    const passwordValue = password.current?.value || "";
+
+    const message = checkValidate(emailValue, passwordValue);
     setErrorMessage(message);
-  };
+    if(message)return;
+
+    //Sign In/ Sign Up Logic
+    if(!isSignInForm){
+      createUserWithEmailAndPassword(
+        auth,
+        emailValue,
+        passwordValue
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          if (error.code === "auth/email-already-in-use") {
+            setErrorMessage(
+              "This email is already registered, please sign in."
+            );
+            setIsSignInForm(true);
+          } else {
+            setErrorMessage(error.message);
+          }
+        });
+      }
+      else{
+        // Sign in Logic
+        signInWithEmailAndPassword(
+          auth,
+          emailValue,
+          passwordValue
+        )
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            if (error.code === "auth/wrong-password") {
+              setErrorMessage(
+                "Incorrect Email and Password."
+              );
+              setIsSignInForm(true);
+            } else {
+              setErrorMessage(error.message);
+            }
+          });
+      }
+
+    }
+
+
+  
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
@@ -46,7 +102,6 @@ const Login = () => {
 
         {!isSignInForm && (
           <input
-            ref={fullName}
             type="text"
             placeholder="Full Name"
             className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
