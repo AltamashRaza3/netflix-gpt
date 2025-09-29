@@ -2,7 +2,6 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-
 on:
   push:
     branches:
@@ -14,18 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20.19.0   # 👈 very important, match Vite requirement
+          node-version: 18
 
-      - run: npm ci
+      - run: npm ci       # or `npm install` if you don’t commit package-lock.json
 
       - run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_NETFLIX_GPT_F8B6F }}"
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_NETFLIX_GPT_F8B6F }}
           channelId: live
           projectId: netflix-gpt-f8b6f
