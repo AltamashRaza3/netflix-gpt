@@ -3,6 +3,7 @@ import Header from "./Header";
 import { checkValidate } from "../utils/validate";
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
 import {auth} from "../utils/firebase";
+import {useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -10,6 +11,7 @@ const Login = () => {
 
   const email = useRef(null);
   const password = useRef(null);
+  const  navigate= useNavigate();
 
   const handleButtonClick = () => {
     const emailValue = email.current?.value || "";
@@ -30,6 +32,7 @@ const Login = () => {
           // Signed up
           const user = userCredential.user;
           console.log(user);
+          navigate("/browser");
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {
@@ -53,6 +56,7 @@ const Login = () => {
             // Signed in
             const user = userCredential.user;
             console.log(user);
+            navigate("/browse")
           })
           .catch((error) => {
             if (error.code === "auth/wrong-password") {
@@ -67,9 +71,6 @@ const Login = () => {
       }
 
     }
-
-
-  
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
