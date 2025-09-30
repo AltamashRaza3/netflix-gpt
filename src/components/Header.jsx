@@ -1,8 +1,10 @@
 import React from "react";
-import {signOut,auth} from "../utils/firebase";
+import {auth} from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 const Header = () => {
-  const navigate= useNavigate;
+  const navigate= useNavigate();
+  
   const handleSignOut = () =>{
     signOut(auth).then(() => {
         // Sign-out successful.
