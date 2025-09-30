@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidate } from "../utils/validate";
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword,} from "firebase/auth";
 import {auth} from "../utils/firebase";
 import {useNavigate } from "react-router-dom";
 
@@ -9,6 +9,7 @@ const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
   const  navigate= useNavigate();
@@ -30,9 +31,21 @@ const Login = () => {
       )
         .then((userCredential) => {
           // Signed up
-          const user = userCredential.user;
+          const user = name.current.value;
+          updateProfile(user, {
+            displayName: "Jane Q. User",
+            photoURL: "https://avatars.githubusercontent.com/u/126352413?v=4",
+          })
+            .then(() => {
+              // Profile updated!
+              navigate("/browse")
+            })
+            .catch((error) => {
+              // An error occurred
+              setErrorMessage(error.message);
+            });
           console.log(user);
-          navigate("/browser");
+          navigate("/browse");
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {
