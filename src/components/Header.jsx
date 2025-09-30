@@ -2,9 +2,11 @@ import React from "react";
 import {auth} from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { useSelector } from "react-redux";
 const Header = () => {
   const navigate= useNavigate();
-  
+  const user = useSelector(store => store.user);
+
   const handleSignOut = () =>{
     signOut(auth).then(() => {
         // Sign-out successful.
@@ -30,7 +32,7 @@ const Header = () => {
           <img
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-md ring-1 ring-white/20 hover:ring-white/40 transition"
             alt="User avatar"
-            src="https://occ-0-6247-2164.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABdpkabKqQAxyWzo6QW_ZnPz1IZLqlmNfK-t4L1VIeV1DY00JhLo_LMVFp936keDxj-V5UELAVJrU--iUUY2MaDxQSSO-0qw.png?r=e6e"
+            src={user.photoURL}
           />
           <button onClick={handleSignOut} className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-md bg-white/10 text-white hover:bg-white/20 border border-white/20 transition">
            Sign Out

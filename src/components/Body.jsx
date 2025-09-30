@@ -9,8 +9,6 @@ import { auth } from '../utils/firebase';
 
 const Body = () => {
   const dispatch = useDispatch();
-  
-
   const appRouter = createBrowserRouter([
     {
       path: "/",
@@ -26,7 +24,12 @@ const Body = () => {
     onAuthStateChanged(auth, (user) => {
   if (user) {
     const {uid, email,displayName,photoURL} = user;
-   dispatch(addUser({uid:uid, email:email, displayName: displayName, photoURL,}));
+   dispatch(addUser({
+    uid:uid,
+    email:email, 
+    displayName: displayName, 
+    photoURL,
+  }));
     // ...
   } else {
     // User is signed out

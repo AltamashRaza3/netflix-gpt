@@ -31,9 +31,9 @@ const Login = () => {
       )
         .then((userCredential) => {
           // Signed up
-          const user = name.current.value;
+          const user = userCredential.user; 
           updateProfile(user, {
-            displayName: "Jane Q. User",
+            displayName: name.current.value,
             photoURL: "https://avatars.githubusercontent.com/u/126352413?v=4",
           })
             .then(() => {
