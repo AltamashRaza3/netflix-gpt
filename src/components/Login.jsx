@@ -1,9 +1,14 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidate } from "../utils/validate";
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword,} from "firebase/auth";
-import {auth} from "../utils/firebase";
-import {useNavigate } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -12,7 +17,8 @@ const Login = () => {
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
-  const  navigate= useNavigate();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   const handleButtonClick = () => {
     const emailValue = email.current?.value || "";
@@ -20,31 +26,19 @@ const Login = () => {
 
     const message = checkValidate(emailValue, passwordValue);
     setErrorMessage(message);
-    if(message)return;
+    if (message) return;
 
-    //Sign In/ Sign Up Logic
-    if(!isSignInForm){
-      createUserWithEmailAndPassword(
-        auth,
-        emailValue,
-        passwordValue
-      )
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCredential) => {
-          // Signed up
-          const user = userCredential.user; 
-          updateProfile(user, {
+          const user = userCredential.user;
+          return updateProfile(user, {
             displayName: name.current.value,
             photoURL: "https://avatars.githubusercontent.com/u/126352413?v=4",
-          })
-            .then(() => {
-              // Profile updated!
-              navigate("/browse")
-            })
-            .catch((error) => {
-              // An error occurred
-              setErrorMessage(error.message);
-            });
-          console.log(user);
+          });
+        })
+        .then(() => auth.currentUser.reload())
+        .then(() => {
           navigate("/browse");
         })
         .catch((error) => {
@@ -57,37 +51,24 @@ const Login = () => {
             setErrorMessage(error.message);
           }
         });
-      }
-      else{
-        // Sign in Logic
-        signInWithEmailAndPassword(
-          auth,
-          emailValue,
-          passwordValue
-        )
-          .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            console.log(user);
-            navigate("/browse")
-          })
-          .catch((error) => {
-            if (error.code === "auth/wrong-password") {
-              setErrorMessage(
-                "Incorrect Email and Password."
-              );
-              setIsSignInForm(true);
-            } else {
-              setErrorMessage(error.message);
-            }
-          });
-      }
-
+    } else {
+      signInWithEmailAndPassword(auth, emailValue, passwordValue)
+        .then(() => {
+          navigate("/browse");
+        })
+        .catch((error) => {
+          if (error.code === "auth/wrong-password") {
+            setErrorMessage("Incorrect Email and Password.");
+          } else {
+            setErrorMessage(error.message);
+          }
+        });
     }
+  };
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
-    setErrorMessage(null); // clear errors when switching forms
+    setErrorMessage(null);
   };
 
   return (
@@ -105,6 +86,34 @@ const Login = () => {
       {/* Header */}
       <Header />
 
+      {/* Avatar and Button on right side of login page */}
+      <div className="absolute top-3 right-6 flex items-center space-x-4 z-20">
+        <img
+          src={
+            user?.photoURL ||
+            "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
+          }
+          alt="Avatar"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-md ring-1 ring-white/20"
+        />
+        {/* Show Sign In or Sign Out button depending on auth */}
+        {user ? (
+          <button
+            onClick={() => auth.signOut()}
+            className="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition"
+          >
+            Sign Out
+          </button>
+        ) : (
+          <button
+            onClick={handleButtonClick}
+            className="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition"
+          >
+            Sign In
+          </button>
+        )}
+      </div>
+
       {/* Auth Form */}
       <form
         onSubmit={(e) => e.preventDefault()}
@@ -116,6 +125,7 @@ const Login = () => {
 
         {!isSignInForm && (
           <input
+            ref={name}
             type="text"
             placeholder="Full Name"
             className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -136,20 +146,22 @@ const Login = () => {
           className="p-3 mb-6 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
         />
 
-        <button
-          type="button"
-          className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold cursor-pointer"
-          onClick={handleButtonClick}
-        >
-          {isSignInForm ? "Sign In" : "Sign Up"}
-        </button>
+        {/* Show form button only if user is NOT logged in */}
+        {!user && (
+          <button
+            type="button"
+            className="py-3 w-full bg-red-600 hover:bg-red-700 rounded-md font-semibold cursor-pointer"
+            onClick={handleButtonClick}
+          >
+            {isSignInForm ? "Sign In" : "Sign Up"}
+          </button>
+        )}
 
-        {/* Error Message */}
         {errorMessage && (
           <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
         )}
 
-        {isSignInForm && (
+        {isSignInForm && !user && (
           <div className="flex justify-between items-center text-sm text-gray-400 mt-4">
             <label className="flex items-center space-x-2">
               <input type="checkbox" className="accent-red-600" />

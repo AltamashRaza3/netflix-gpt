@@ -1,48 +1,60 @@
 import React from "react";
-import {auth} from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { auth } from "../utils/firebase";
 import { useSelector } from "react-redux";
-const Header = () => {
-  const navigate= useNavigate();
-  const user = useSelector(store => store.user);
 
-  const handleSignOut = () =>{
-    signOut(auth).then(() => {
-        // Sign-out successful.
+const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const user = useSelector((store) => store.user);
+
+  const isLoginPage = location.pathname === "/";
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
         navigate("/");
       })
       .catch((error) => {
-        // An error happened.
-        navigate("/error")
+        console.error("Sign out error:", error);
       });
-  }
-  return (
-    <header className="absolute top-0 left-0 w-full z-10">
-      <div className="flex items-center justify-between px-6 sm:px-10 py-3 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-sm">
-        {/* Left: Netflix Logo */}
-          <img
-            className="w-28 sm:w-36 select-none"
-            src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
-            alt="Netflix"
-          />
+  };
 
-        {/* User avatar */}
-        <div className="flex items-center gap-4">
+  return (
+    <header
+      className={`absolute top-0 left-0 w-full z-10 flex items-center justify-between px-6 sm:px-12 py-4
+        ${isLoginPage ? "" : "bg-black bg-opacity-60 backdrop-blur-md"}`}
+    >
+      {/* Netflix Logo */}
+      <img
+        onClick={() => navigate(user ? "/browse" : "/")}
+        className="w-28 sm:w-36 cursor-pointer z-20"
+        src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+        alt="Netflix Logo"
+      />
+
+      {/* Avatar + Sign Out (only if user is logged in and not on login page) */}
+      {!isLoginPage && user && (
+        <div className="flex items-center space-x-4">
           <img
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-md ring-1 ring-white/20 hover:ring-white/40 transition"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-white/30"
             alt="User avatar"
-            src={user.photoURL}
+            src={
+              user?.photoURL ||
+              "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
+            }
           />
-          <button onClick={handleSignOut} className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-md bg-white/10 text-white hover:bg-white/20 border border-white/20 transition">
-           Sign Out
+          <button
+            onClick={handleSignOut}
+            className="text-white text-sm sm:text-base px-4 py-2 bg-white/10 border border-white/20 rounded hover:bg-white/20 transition"
+          >
+            Sign Out
           </button>
         </div>
-      </div>
+      )}
     </header>
   );
 };
 
 export default Header;
-
-
