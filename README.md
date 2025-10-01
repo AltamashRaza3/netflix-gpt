@@ -13,8 +13,9 @@
 - create a signup user account
 - Implement Sign In user Api
 - Created Redux store with userSlice
-- Adding user photo after login
-
+- Implement Sign Out feature
+- Adding user photo after login// Update Profile API
+- Fetch movies from TMBD API
 ...
 
 # Feautres
