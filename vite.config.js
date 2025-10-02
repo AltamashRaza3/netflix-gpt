@@ -8,5 +8,5 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
-  base: '/',   // ✅ relative paths for assets
+  base: './',   // ✅ relative paths for assets
 })
