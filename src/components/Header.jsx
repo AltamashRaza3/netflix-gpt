@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
 
 const Header = () => {
+  const dispatch= useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((store) => store.user);
@@ -20,7 +22,26 @@ const Header = () => {
         console.error("Sign out error:", error);
       });
   };
+   useEffect(() => {
+     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+       if (user) {
+         await user.reload(); // refresh user data before reading
+         const currentUser = auth.currentUser; // must use this to get updated profile
+         dispatch(
+           addUser({
+             uid: currentUser.uid,
+             email: currentUser.email,
+             displayName: currentUser.displayName,
+             photoURL: currentUser.photoURL,
+           })
+         );
+       } else {
+         dispatch(removeUser());
+       }
+     });
 
+     return () => unsubscribe();
+   }, [dispatch]);
   return (
     <header
       className={`absolute top-0 left-0 w-full z-10 flex items-center justify-between px-6 sm:px-12 py-4
