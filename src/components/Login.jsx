@@ -21,7 +21,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // ✅ Handle auto-redirect on login/logout
+  // Auto redirect based on auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -30,14 +30,13 @@ const Login = () => {
         navigate("/");
       }
     });
-
     return () => unsubscribe();
   }, [navigate]);
 
   const handleAuth = async () => {
-    const emailValue = email.current?.value || "";
-    const passwordValue = password.current?.value || "";
-    const nameValue = name.current?.value || "";
+    const emailValue = (email.current?.value || "").trim();
+    const passwordValue = (password.current?.value || "").trim();
+    const nameValue = (name.current?.value || "").trim();
 
     const message = checkValidate(emailValue, passwordValue);
     setErrorMessage(message);
@@ -52,21 +51,25 @@ const Login = () => {
           emailValue,
           passwordValue
         );
+
+        // Generate unique avatar using new DiceBear API
+        const userId = userCredential.user.uid;
+        const avatarURL = `https://api.dicebear.com/6.x/bottts/svg?seed=${userId}`;
+
         await updateProfile(userCredential.user, {
           displayName: nameValue,
-          photoURL: "https://avatars.githubusercontent.com/u/126352413?v=4",
+          photoURL: avatarURL,
         });
       } else {
         // Sign In
         await signInWithEmailAndPassword(auth, emailValue, passwordValue);
       }
-      // ✅ Navigation will happen automatically via onAuthStateChanged above
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setErrorMessage("This email is already registered, please sign in.");
         setIsSignInForm(true);
       } else if (error.code === "auth/wrong-password") {
-        setErrorMessage("Incorrect Email and Password.");
+        setErrorMessage("Incorrect Email or Password.");
       } else {
         setErrorMessage(error.message);
       }
@@ -110,6 +113,7 @@ const Login = () => {
             type="text"
             placeholder="Full Name"
             className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+            disabled={loading}
           />
         )}
 
@@ -118,6 +122,7 @@ const Login = () => {
           type="email"
           placeholder="Email Address"
           className="p-3 mb-4 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+          disabled={loading}
         />
 
         <input
@@ -125,6 +130,7 @@ const Login = () => {
           type="password"
           placeholder="Password"
           className="p-3 mb-6 w-full rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+          disabled={loading}
         />
 
         <button
@@ -145,7 +151,11 @@ const Login = () => {
         {isSignInForm && (
           <div className="flex justify-between items-center text-sm text-gray-400 mt-4">
             <label className="flex items-center space-x-2">
-              <input type="checkbox" className="accent-red-600" />
+              <input
+                type="checkbox"
+                className="accent-red-600"
+                disabled={loading}
+              />
               <span>Remember me</span>
             </label>
             <a href="#" className="hover:underline">
@@ -160,6 +170,7 @@ const Login = () => {
             type="button"
             className="text-white hover:underline cursor-pointer"
             onClick={toggleSignInForm}
+            disabled={loading}
           >
             {isSignInForm ? "Sign up now" : "Sign in"}
           </button>

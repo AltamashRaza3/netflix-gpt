@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
+import { LOGO, USER_AVATAR } from "../utils/constants";
 
 const Header = () => {
   const dispatch= useDispatch();
@@ -51,8 +52,7 @@ const Header = () => {
       <img
         onClick={() => navigate(user ? "/browse" : "/")}
         className="w-28 sm:w-36 cursor-pointer z-20"
-        src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
-        alt="Netflix Logo"
+        src={LOGO} alt="Netflix Logo"
       />
 
       {/* Avatar + Sign Out (only if user is logged in and not on login page) */}
@@ -63,7 +63,7 @@ const Header = () => {
             alt="User avatar"
             src={
               user?.photoURL ||
-              "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
+              USER_AVATAR
             }
           />
           <button
