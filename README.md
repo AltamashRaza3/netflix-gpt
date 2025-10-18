@@ -15,7 +15,8 @@
 - Created Redux store with userSlice
 - Implement Sign Out feature
 - Adding user photo after login// Update Profile API
-- Fetch movies from TMBD-API 
+- Fetch movies from TMBD-API & create playing movies list API
+- Get Data from TMBD now playing movies list API
 
 ...
 
