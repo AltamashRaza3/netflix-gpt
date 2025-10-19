@@ -1,7 +1,7 @@
 export const LOGO = "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg";
 
-export const USER_AVATAR = (seed) =>
-  `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
+export const USER_AVATAR = (userId) =>
+  `https://api.dicebear.com/6.x/bottts/svg?seed=${userId}&scale=90`;
 
 
 export const API_OPTIONS = {
