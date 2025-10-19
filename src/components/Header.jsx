@@ -27,7 +27,7 @@ const Header = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        // Optionally reload to refresh profile data
+        // Refresh user data to avoid stale displayName/photoURL
         await fbUser.reload();
         const currentUser = auth.currentUser;
         dispatch(
@@ -63,11 +63,13 @@ const Header = () => {
       {/* Avatar + Sign Out */}
       {!isLoginPage && user && (
         <div className="flex items-center space-x-4">
+          {/* ✅ Fixed: Always use fallback seed, no undefined */}
           <img
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-white/30"
             alt="User avatar"
-            src={user?.photoURL || USER_AVATAR(user?.uid || "default")}
+            src={user.photoURL || USER_AVATAR(user.uid || "guest")}
           />
+
           <button
             onClick={handleSignOut}
             className="text-white text-sm sm:text-base px-4 py-2 bg-white/10 border border-white/20 rounded hover:bg-white/20 transition"
