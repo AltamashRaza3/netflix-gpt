@@ -13,7 +13,6 @@ const useNowPlayingMovies = () => {
         API_OPTIONS
       );
       const json = await response.json();
-      console.log(json.results); // Display movie list
       dispatch(addNowPlayingMovies(json.results));
     } catch (error) {
       console.error("Error fetching now playing movies:", error);
