@@ -17,6 +17,12 @@
 - Adding user photo after login// Update Profile API
 - Fetch movies from TMBD-API & create playing movies list API
 - Get Data from TMBD now playing movies list API
+- custom hooks for now Playing Movies
+- Create movie slice
+- Update Store with movie Data
+- Fetch Data for trailer video
+- Upadate the store with trailer video Data
+- Embedded the youtube video and make it autoplay and mute
 
 ...
 
