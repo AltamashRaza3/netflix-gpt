@@ -18,7 +18,7 @@ const SecondaryContainer = () => {
   useUpcomingMovies();
   useComedyMovies();
   useHorrorMovies();
-
+ 
   return (
     movies.nowPlayingMovies && (
       <div className="bg-black">

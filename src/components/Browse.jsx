@@ -14,7 +14,7 @@ import useUpcomingMovies from "../hooks/useUpcomingMovies";
 
 
 const Browse = () => {
-  useNowPlayingMovies();
+  useNowPlayingMovies(); 
   usePopularMovies();
   useComedyMovies();
   useHorrorMovies();
