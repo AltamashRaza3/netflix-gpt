@@ -4,9 +4,10 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
+   base: '/netflix-gpt/', 
   plugins: [
     tailwindcss(),
     react(),
   ],
-  base: './',   // ✅ relative paths for assets
+
 })
